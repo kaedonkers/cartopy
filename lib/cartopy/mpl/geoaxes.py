@@ -49,6 +49,8 @@ import cartopy.mpl.feature_artist as feature_artist
 import cartopy.mpl.patch as cpatch
 from cartopy.mpl.slippy_image_artist import SlippyImageArtist
 from cartopy.vector_transform import vector_scalar_to_grid
+from cartopy.io import LocatedImage
+from cartopy.raster import LocatedImageRasterSource
 
 
 assert mpl.__version__ >= '1.5.1', ('Cartopy is only supported with '
@@ -843,9 +845,14 @@ class GeoAxes(matplotlib.axes.Axes):
                                  'raster', 'natural_earth',
                                  '50-natural-earth-1-downsampled.png')
 
-            return self.imshow(imread(fname), origin='upper',
-                               transform=source_proj,
-                               extent=[-180, 180, -90, 90])
+            # return self.imshow(imread(fname), origin='upper',
+            #                    transform=source_proj,
+            #                    extent=[-180, 180, -90, 90])
+            located_image = LocatedImage(imread(fname),
+                                         [-180, 180, -90, 90])
+            raster_source = LocatedImageRasterSource(located_image,
+                                                     source_proj)
+            return self.add_raster(raster_source)
         else:
             raise ValueError('Unknown stock image %r.' % name)
 
